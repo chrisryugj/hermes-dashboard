@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>Hermes</title>
+<style>@font-face{font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:url(https://rsms.me/inter/font-files/InterVariable.woff2) format('woff2');}</style>
+<style>
+:root{--bg0:#08090a;--bg1:#0f1011;--bg2:#191a1b;--bg3:#28282c;--t1:#f7f8f8;--t2:#d0d6e0;--t3:#8a8f98;--t4:#62666d;--brand:#5e6ad2;--accent:#7170ff;--accent-h:#828fff;--green:#27a644;--red:#ff453a;--orange:#ff9f0a;--b3:rgba(255,255,255,.08);--b4:rgba(255,255,255,.05);--card:rgba(255,255,255,.02);--card-h:rgba(255,255,255,.04);--overlay:rgba(0,0,0,.85);--ff:'Inter',system-ui,-apple-system,sans-serif;--mono:'SF Mono','Menlo','Monaco',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--ff);background:var(--bg0);color:var(--t1);-webkit-font-smoothing:antialiased;font-feature-settings:'cv01','ss03';}
+::selection{background:rgba(94,106,210,.3);}
+::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#23252a;border-radius:3px;}
+.nav{width:200px;background:var(--bg1);border-right:1px solid var(--b4);padding:1rem .5rem;display:flex;flex-direction:column;flex-shrink:0;}
+.nav-logo{font-size:.95rem;font-weight:590;padding:.5rem .75rem;margin-bottom:1.25rem;color:var(--accent);letter-spacing:-.02em;}
+.ni{display:flex;align-items:center;gap:.5rem;padding:.45rem .75rem;border-radius:6px;font-size:.8rem;font-weight:510;color:var(--t3);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .12s;letter-spacing:-.01em;}
+.ni:hover{background:rgba(255,255,255,.04);color:var(--t2);}.ni.on{background:rgba(94,106,210,.12);color:var(--accent);}
+.ni-ico{font-size:.7rem;opacity:.6;width:14px;text-align:center;}
+.card{background:var(--card);border:1px solid var(--b3);border-radius:8px;}
+.card-h{font-size:.7rem;font-weight:590;color:var(--t4);text-transform:uppercase;letter-spacing:.05em;padding:.6rem .85rem;border-bottom:1px solid var(--b4);}
+.stat{text-align:center;padding:1.1rem .75rem;}.sv{font-size:1.35rem;font-weight:590;letter-spacing:-.03em;}.sl{font-size:.65rem;font-weight:510;color:var(--t4);margin-top:.15rem;text-transform:uppercase;letter-spacing:.04em;}
+.pill{display:inline-flex;align-items:center;padding:.1rem .5rem;border-radius:9999px;font-size:.65rem;font-weight:510;}.pg{background:rgba(39,166,68,.15);color:var(--green);}.pr{background:rgba(255,69,58,.15);color:var(--red);}.po{background:rgba(255,159,10,.15);color:var(--orange);}.pb{background:rgba(94,106,210,.15);color:var(--accent);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.4rem .85rem;border-radius:6px;font-size:.78rem;font-weight:510;cursor:pointer;transition:all .12s;border:1px solid transparent;font-family:var(--ff);font-feature-settings:'cv01','ss03';letter-spacing:-.01em;}
+.btn-p{background:var(--brand);color:#fff;border-color:var(--brand);}.btn-p:hover{background:var(--accent-h);}
+.btn-d{background:rgba(255,69,58,.1);color:var(--red);border-color:rgba(255,69,58,.2);}.btn-d:hover{background:rgba(255,69,58,.2);}
+.btn-g{background:rgba(255,255,255,.03);color:var(--t2);border-color:var(--b3);}.btn-g:hover{background:rgba(255,255,255,.06);}
+.btn-s{background:rgba(39,166,68,.12);color:var(--green);border-color:rgba(39,166,68,.2);}.btn-s:hover{background:rgba(39,166,68,.2);}
+.inp{background:var(--bg0);border:1px solid var(--b3);color:var(--t1);border-radius:6px;padding:.5rem .75rem;font-size:.82rem;width:100%;font-family:var(--ff);font-feature-settings:'cv01','ss03';transition:border .15s,box-shadow .15s;}
+.inp:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(113,112,255,.15);}.inp::placeholder{color:var(--t4);}
+select.inp{appearance:none;background-color:var(--bg0);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238a8f98' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .7rem center;padding-right:1.8rem;}
+select.inp option{background:var(--bg2);color:var(--t1);}
+textarea.inp{font-family:var(--mono);font-size:.75rem;line-height:1.55;min-height:280px;resize:vertical;}
+table{width:100%;border-collapse:collapse;}th{text-align:left;padding:.5rem .75rem;font-size:.65rem;font-weight:590;color:var(--t4);text-transform:uppercase;letter-spacing:.04em;}td{padding:.55rem .75rem;font-size:.8rem;border-top:1px solid var(--b4);}tr:hover td{background:rgba(255,255,255,.015);}
+.log{font-family:var(--mono);font-size:.7rem;line-height:1.55;color:var(--t3);}
+.page{display:none;}.page.on{display:block;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem;}
+.fb{display:flex;justify-content:space-between;align-items:center;}.row{display:flex;gap:.4rem;align-items:center;}.mb{margin-bottom:.65rem;}.mt{margin-top:.65rem;}
+.toast{position:fixed;top:.75rem;right:.75rem;z-index:999;padding:.55rem 1rem;border-radius:8px;font-size:.78rem;font-weight:510;backdrop-filter:blur(20px);animation:ti .2s ease;border:1px solid;}
+.toast-ok{background:rgba(39,166,68,.12);color:var(--green);border-color:rgba(39,166,68,.2);}.toast-err{background:rgba(255,69,58,.12);color:var(--red);border-color:rgba(255,69,58,.2);}
+.toast-warn{background:rgba(255,159,10,.12);color:var(--orange);border-color:rgba(255,159,10,.2);}
+@keyframes ti{from{transform:translateY(-8px);opacity:0;}}
+.modal-bg{position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(12px);z-index:100;display:flex;align-items:center;justify-content:center;animation:mf .15s ease;}
+@keyframes mf{from{opacity:0;}}
+.modal{background:var(--bg2);border-radius:12px;border:1px solid var(--b3);padding:1.5rem;min-width:440px;max-width:560px;box-shadow:rgba(0,0,0,.4) 0 16px 48px;animation:ms .2s ease;}
+@keyframes ms{from{transform:scale(.97);opacity:0;}}
+.modal h3{font-size:.95rem;font-weight:590;margin-bottom:1rem;letter-spacing:-.02em;}
+.modal label{font-size:.7rem;font-weight:510;color:var(--t3);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em;}
+.modal .help{font-size:.7rem;color:var(--t4);margin-bottom:.6rem;}
+.banner{padding:.5rem .85rem;border-radius:6px;font-size:.78rem;font-weight:510;display:flex;align-items:center;gap:.5rem;margin-bottom:.65rem;}
+.banner-warn{background:rgba(255,159,10,.08);color:var(--orange);border:1px solid rgba(255,159,10,.15);}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--b3);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div style="display:flex;height:100vh;">
+<nav class="nav">
+  <div class="nav-logo">Hermes</div>
+  <button class="ni on" onclick="go('ov')" id="n-ov"><span class="ni-ico">&#9679;</span>Overview</button>
+  <button class="ni" onclick="go('mcp')" id="n-mcp"><span class="ni-ico">&#9881;</span>MCP</button>
+  <button class="ni" onclick="go('cron')" id="n-cron"><span class="ni-ico">&#8986;</span>Cron</button>
+  <button class="ni" onclick="go('sk')" id="n-sk"><span class="ni-ico">&#9733;</span>Skills</button>
+  <button class="ni" onclick="go('cfg')" id="n-cfg"><span class="ni-ico">&#9636;</span>Config</button>
+  <button class="ni" onclick="go('env')" id="n-env"><span class="ni-ico">&#9055;</span>Env</button>
+  <button class="ni" onclick="go('soul')" id="n-soul"><span class="ni-ico">&#9786;</span>Soul</button>
+  <button class="ni" onclick="go('log')" id="n-log"><span class="ni-ico">&#9776;</span>Logs</button>
+  <button class="ni" onclick="go('sess')" id="n-sess"><span class="ni-ico">&#9993;</span>Sessions</button>
+  <div style="margin-top:auto;padding-top:.75rem;border-top:1px solid var(--b4);">
+    <button class="btn btn-d" style="width:100%;font-size:.72rem;" onclick="doRestart()">Restart Gateway</button>
+  </div>
+</nav>
+<main style="flex:1;overflow-y:auto;padding:1.5rem 2rem;">
+  <div id="restart-banner"></div>
+  <div id="p-ov" class="page on"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">Overview</h1></div><div id="ov"></div></div>
+  <div id="p-mcp" class="page"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">MCP Servers</h1><div class="row"><button class="btn btn-g" onclick="mcpPaste()">Paste Config</button><button class="btn btn-p" onclick="mcpAddModal()">+ Add</button></div></div><div id="mcp-l"></div></div>
+  <div id="p-cron" class="page"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">Cron Jobs</h1><button class="btn btn-p" onclick="cronModal()">+ Create</button></div><div id="cron-l"></div></div>
+  <div id="p-sk" class="page"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;margin-bottom:.6rem;">Skills</h1><input class="inp mb" id="skq" placeholder="Search skills..." oninput="skF()"><div id="sk-l"></div></div>
+  <div id="p-cfg" class="page"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">config.yaml</h1><button class="btn btn-p" onclick="cfgSave()">Save</button></div><div id="cfg-c"></div></div>
+  <div id="p-env" class="page"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">.env</h1><div class="row"><button class="btn btn-g" onclick="envAddModal()">+ Add</button><button class="btn btn-p" onclick="envSave()">Save</button></div></div><div id="env-c"></div></div>
+  <div id="p-soul" class="page"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">SOUL.md</h1><button class="btn btn-p" onclick="soulSave()">Save</button></div><div id="soul-c"></div></div>
+  <div id="p-log" class="page"><div class="fb mb"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;">Logs</h1><div class="row"><button class="btn btn-g" onclick="logLoad()">Refresh</button><button class="btn btn-d" onclick="ask('Clear all logs?',logClear)">Clear</button></div></div><div id="log-c" class="card" style="padding:.6rem;max-height:78vh;overflow:auto;"></div></div>
+  <div id="p-sess" class="page"><h1 style="font-size:1.25rem;font-weight:590;letter-spacing:-.03em;margin-bottom:.75rem;">Sessions</h1><div id="sess-c"></div></div>
+</main>
+</div>
+
+<!-- Generic Modal Container -->
+<div id="gm" class="modal-bg" style="display:none" onclick="if(event.target===this)gmClose()"><div class="modal" id="gm-body"></div></div>
+
+<script>
+const A='/api/dashboard',H='Bearer '+(new URLSearchParams(location.search).get('key')||'');
+const J=JSON.stringify,P=JSON.parse,$=id=>document.getElementById(id);
+async function api(p,o={}){try{const r=await fetch(A+p,{...o,headers:{Authorization:H,'Content-Type':'application/json',...o.headers}});if(!r.ok){const t=await r.text().catch(()=>'');toast(`API ${r.status}: ${t.slice(0,80)}`,'err');return{};}return await r.json();}catch(e){toast('Network error: '+e.message,'err');return{};}}
+function esc(s){if(s==null)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML.replace(/'/g,'&#39;').replace(/\\/g,'&#92;');}
+
+// ── Toast ──
+function toast(m,t='ok'){const e=document.createElement('div');e.className='toast toast-'+t;e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),3500);}
+
+// ── Generic Dark Modal System ──
+let _gmResolve=null;
+function gmClose(v){$('gm').style.display='none';_gmResolve?.(v);}
+function gmShow(html){return new Promise(r=>{_gmResolve=r;$('gm-body').innerHTML=html;$('gm').style.display='flex';setTimeout(()=>{const fi=$('gm-body').querySelector('input:not([type=hidden]),textarea,select');fi?.focus();},50);});}
+
+// Confirm dialog (dark)
+function ask(msg,onYes){
+  gmShow(`<h3>${esc(msg)}</h3><div style="display:flex;gap:.4rem;justify-content:flex-end;margin-top:1rem;"><button class="btn btn-g" onclick="gmClose()">Cancel</button><button class="btn btn-d" id="gm-yes">Confirm</button></div>`);
+  $('gm-yes').onclick=()=>{gmClose();onYes();};
+}
+
+// Form modal helper
+function formModal(title,fields,onSubmit){
+  const rows=fields.map(f=>{
+    if(f.type==='select')return`<label>${esc(f.label)}</label><select class="inp mb" id="gf-${f.id}">${f.options.map(o=>`<option value="${esc(o.v)}"${o.v===f.val?' selected':''}>${esc(o.l)}</option>`).join('')}</select>`;
+    if(f.type==='textarea')return`<label>${esc(f.label)}</label>${f.help?`<div class="help">${esc(f.help)}</div>`:''}<textarea class="inp mb" id="gf-${f.id}" placeholder="${esc(f.ph||'')}">${esc(f.val||'')}</textarea>`;
+    return`<label>${esc(f.label)}</label><input class="inp mb" id="gf-${f.id}" value="${esc(f.val||'')}" placeholder="${esc(f.ph||'')}">`;
+  }).join('');
+  gmShow(`<h3>${esc(title)}</h3>${rows}<div style="display:flex;gap:.4rem;justify-content:flex-end;"><button class="btn btn-g" onclick="gmClose()">Cancel</button><button class="btn btn-p" id="gf-ok">OK</button></div>`);
+  $('gf-ok').onclick=()=>{const d={};fields.forEach(f=>d[f.id]=($('gf-'+f.id)?.value||''));gmClose();onSubmit(d);};
+  // Enter key submit for single-input forms
+  if(fields.length<=2){fields.forEach(f=>{const el=$('gf-'+f.id);if(el?.tagName==='INPUT')el.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('gf-ok').click();}};});}
+}
+
+// ── Restart with status check ──
+let needsRestart=false;
+function showRestartBanner(){
+  needsRestart=true;
+  $('restart-banner').innerHTML=`<div class="banner banner-warn">Settings changed — <button class="btn btn-p" style="padding:.25rem .65rem;font-size:.72rem;margin-left:.3rem;" onclick="doRestart()">Restart now</button></div>`;
+}
+function hideRestartBanner(){needsRestart=false;$('restart-banner').innerHTML='';}
+async function doRestart(){
+  ask('Gateway를 재시작합니다.',async()=>{
+    await api('/restart',{method:'POST'});
+    hideRestartBanner();
+    toast('Restarting...','warn');
+    // Poll until gateway is back
+    let tries=0;
+    const poll=setInterval(async()=>{
+      tries++;
+      try{const r=await fetch('/health',{signal:AbortSignal.timeout(2000)});if(r.ok){clearInterval(poll);toast('Gateway ready');LD.ov?.();}}catch{}
+      if(tries>15){clearInterval(poll);toast('Gateway not responding','err');}
+    },2000);
+  });
+}
+
+// ── Nav ──
+function go(p){document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));document.querySelectorAll('.ni').forEach(e=>e.classList.remove('on'));$('p-'+p)?.classList.add('on');$('n-'+p)?.classList.add('on');LD[p]?.();}
+
+// ── Models ──
+const MD={
+  'openai-codex':{label:'OpenAI Codex',models:[{id:'gpt-5.4',l:'GPT-5.4',d:'Flagship'},{id:'gpt-5.4-mini',l:'GPT-5.4 Mini',d:'Fast'},{id:'gpt-5.3-codex',l:'GPT-5.3 Codex',d:'Previous'},{id:'gpt-5.2-codex',l:'GPT-5.2 Codex',d:'Stable'},{id:'gpt-5.1-codex-mini',l:'GPT-5.1 Mini',d:'Light'},{id:'gpt-5.1-codex-max',l:'GPT-5.1 Max',d:'Extended ctx'}]},
+  'anthropic':{label:'Anthropic',models:[{id:'claude-opus-4-6',l:'Claude Opus 4.6',d:'Most capable'},{id:'claude-sonnet-4-6',l:'Claude Sonnet 4.6',d:'Best balance'},{id:'claude-opus-4-5-20251101',l:'Claude Opus 4.5',d:'Prev gen'},{id:'claude-sonnet-4-5-20250929',l:'Claude Sonnet 4.5',d:'Prev gen'},{id:'claude-haiku-4-5-20251001',l:'Claude Haiku 4.5',d:'Fast'}]},
+  'gemini':{label:'Google Gemini',models:[{id:'gemini-3.1-pro-preview',l:'Gemini 3.1 Pro',d:'Latest'},{id:'gemini-3-flash-preview',l:'Gemini 3 Flash',d:'Fast'},{id:'gemini-2.5-pro',l:'Gemini 2.5 Pro',d:'Stable'},{id:'gemini-2.5-flash',l:'Gemini 2.5 Flash',d:'Fast stable'}]},
+  'deepseek':{label:'DeepSeek',models:[{id:'deepseek-chat',l:'DeepSeek Chat',d:'General'},{id:'deepseek-reasoner',l:'DeepSeek Reasoner',d:'CoT'}]},
+  'xai':{label:'xAI Grok',models:[{id:'grok-4.20-0309-reasoning',l:'Grok 4.20',d:'Latest'},{id:'grok-4-1-fast-reasoning',l:'Grok 4.1 Fast',d:'Fast'},{id:'grok-code-fast-1',l:'Grok Code',d:'Code'},{id:'grok-3',l:'Grok 3',d:'General'}]},
+  'openrouter':{label:'OpenRouter',models:[{id:'anthropic/claude-opus-4.6',l:'Claude Opus 4.6',d:'via OR'},{id:'openai/gpt-5.4',l:'GPT-5.4',d:'via OR'},{id:'google/gemini-3.1-pro-preview',l:'Gemini 3.1 Pro',d:'via OR'}]},
+  'nous':{label:'Nous Portal',models:[{id:'anthropic/claude-sonnet-4.6',l:'Sonnet 4.6',d:'via Nous'},{id:'openai/gpt-5.4',l:'GPT-5.4',d:'via Nous'},{id:'xiaomi/mimo-v2-pro',l:'MiMo V2 Pro',d:'Free'}]},
+  'copilot':{label:'GitHub Copilot',models:[{id:'gpt-5.4',l:'GPT-5.4',d:'via Copilot'},{id:'claude-sonnet-4.6',l:'Sonnet 4.6',d:'via Copilot'},{id:'gemini-2.5-pro',l:'Gemini 2.5 Pro',d:'via Copilot'}]},
+};
+function mmOpen(cur){
+  let curProv='openai-codex';
+  if(cur.startsWith('claude'))curProv='anthropic';else if(cur.startsWith('gemini'))curProv='gemini';else if(cur.startsWith('deepseek'))curProv='deepseek';else if(cur.startsWith('grok'))curProv='xai';else if(cur.includes('/'))curProv='openrouter';
+  const provOpts=Object.entries(MD).map(([k,v])=>({v:k,l:v.label}));
+  const html=`<h3>Model</h3>
+    <label>Provider</label><select class="inp mb" id="mm-p" onchange="mmUpd()">${provOpts.map(o=>`<option value="${o.v}"${o.v===curProv?' selected':''}>${esc(o.l)}</option>`).join('')}</select>
+    <label>Model</label><select class="inp mb" id="mm-m"></select>
+    <div style="font-size:.72rem;color:var(--t4);margin-bottom:1rem;" id="mm-d"></div>
+    <div style="display:flex;gap:.4rem;justify-content:flex-end;">
+      <button class="btn btn-g" onclick="gmClose()">Cancel</button>
+      <button class="btn btn-p" id="mm-ok">Apply & Restart</button>
+    </div>`;
+  gmShow(html);
+  mmUpd();
+  // Try select current
+  const ms=$('mm-m');if(ms)for(const o of ms.options)if(o.value===cur){o.selected=true;break;}
+  mmDesc();
+  $('mm-ok').onclick=mmApply;
+}
+function mmUpd(){const ms=MD[$('mm-p')?.value]?.models||[];const sel=$('mm-m');if(sel)sel.innerHTML=ms.map(m=>`<option value="${m.id}">${m.l}</option>`).join('');mmDesc();}
+function mmDesc(){const ms=MD[$('mm-p')?.value]?.models||[];const m=ms.find(x=>x.id===$('mm-m')?.value);if($('mm-d'))$('mm-d').textContent=m?.d||'';}
+async function mmApply(){
+  const m=$('mm-m')?.value;if(!m)return;
+  gmClose();
+  const r=await api('/model',{method:'POST',body:J({model:m})});
+  if(r.ok){
+    toast(`${r.old} → ${r.new}`);
+    // Auto restart
+    await api('/restart',{method:'POST'});
+    toast('Restarting with new model...','warn');
+    let tries=0;
+    const poll=setInterval(async()=>{
+      tries++;
+      try{const res=await fetch('/health',{signal:AbortSignal.timeout(2000)});if(res.ok){clearInterval(poll);hideRestartBanner();toast('Ready with '+m);LD.ov?.();}}catch{}
+      if(tries>15){clearInterval(poll);toast('Gateway not responding','err');}
+    },2000);
+  }else toast(r.error||'Failed','err');
+}
+
+// ── Overview ──
+async function loadOv(){
+  const[d,au,dk]=await Promise.all([api('/overview'),api('/auth'),api('/disk')]);
+  const g=d.gateway||{},fm=b=>b>1048576?(b/1048576).toFixed(1)+' MB':(b/1024).toFixed(0)+' KB';
+  const pl=Object.entries(g.platforms||{}).map(([k,v])=>{const s=typeof v==='object'?v.state:v;return`<div style="display:flex;justify-content:space-between;padding:.35rem 0;font-size:.8rem;"><span style="color:var(--t2)">${esc(k)}</span><span class="pill ${s==='connected'?'pg':'pr'}">${esc(s)}</span></div>`;}).join('');
+  const cr=(d.cron_summary||[]).map(j=>`<tr><td style="font-weight:510">${esc(j.name)}</td><td><span class="pill ${j.enabled?'pg':'pr'}">${j.enabled?'ON':'OFF'}</span></td><td><span class="pill ${j.last_status==='ok'?'pg':j.last_status?'pr':'po'}">${esc(j.last_status||'-')}</span></td><td style="color:var(--t4);font-size:.75rem">${esc(j.deliver)}</td><td style="color:var(--t4);font-size:.75rem">${j.next_run?new Date(j.next_run).toLocaleString('ko-KR'):'-'}</td></tr>`).join('');
+  const mc=Object.keys(d.mcp_servers||{}).map(k=>`<span class="pill pb" style="margin:.1rem">${esc(k)}</span>`).join('')||'<span style="color:var(--t4);font-size:.8rem">None</span>';
+  const pv=Object.entries(au.providers||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:.3rem 0;font-size:.8rem;"><span style="color:var(--t2)">${esc(k)}</span><span class="pill ${v.has_token?'pg':'pr'}">${v.has_token?'Active':'No Token'}</span></div>`).join('');
+  const di=Object.entries(dk).filter(([k])=>k!=='total').map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:.2rem 0;font-size:.8rem;"><span style="color:var(--t3)">${esc(k)}</span><span>${fm(v)}</span></div>`).join('');
+  $('ov').innerHTML=`
+    <div class="g4 mb">
+      <div class="card" style="cursor:pointer" onclick="mmOpen('${esc(d.model)}')"><div class="stat"><div class="sv" style="color:var(--accent)">${esc(d.model)}</div><div class="sl">Model · Click to change</div></div></div>
+      <div class="card"><div class="stat"><div class="sv" style="color:${g.state==='running'?'var(--green)':'var(--red)'}">${g.state==='running'?'Running':'Down'}</div><div class="sl">Gateway · PID ${g.pid||'?'}</div></div></div>
+      <div class="card"><div class="stat"><div class="sv">${d.skill_count}</div><div class="sl">Skills</div></div></div>
+      <div class="card"><div class="stat"><div class="sv">${d.session_count}</div><div class="sl">Sessions</div></div></div>
+    </div>
+    <div class="g2 mb"><div class="card"><div class="card-h">Platforms</div><div style="padding:.5rem .75rem">${pl}</div></div><div class="card"><div class="card-h">MCP Servers</div><div style="padding:.65rem .75rem">${mc}</div></div></div>
+    <div class="g2 mb"><div class="card"><div class="card-h">Auth · ${esc(au.active_provider)}</div><div style="padding:.5rem .75rem">${pv}</div></div><div class="card"><div class="card-h">Disk · ${fm(dk.total||0)}</div><div style="padding:.5rem .75rem">${di}</div></div></div>
+    <div class="card"><div class="card-h">Cron Jobs</div><table><thead><tr><th>Name</th><th>Status</th><th>Last</th><th>Deliver</th><th>Next</th></tr></thead><tbody>${cr}</tbody></table></div>`;
+}
+
+// ── MCP ──
+let mcpD={};
+async function mcpLoad(){mcpD=await api('/mcp');mcpR();}
+function mcpR(){$('mcp-l').innerHTML=Object.entries(mcpD).map(([n,c])=>`<div class="card mb" style="padding:.85rem"><div class="fb"><div><div style="font-weight:590;color:var(--accent);font-size:.85rem">${esc(n)}</div><div style="font-size:.75rem;color:var(--t3);margin-top:.2rem;font-family:var(--mono)">${esc(c.command)} ${(c.args||[]).join(' ')}</div>${c.env?`<div style="font-size:.7rem;color:var(--t4);font-family:var(--mono)">${esc(J(c.env))}</div>`:''}</div><div class="row"><button class="btn btn-g" onclick="mcpEditModal('${esc(n)}')">Edit</button><button class="btn btn-d" onclick="ask('Delete ${esc(n)}?',()=>{delete mcpD['${esc(n)}'];mcpSave();})">Delete</button></div></div></div>`).join('')||'<div style="color:var(--t4)">No MCP servers</div>';}
+function mcpAddModal(){
+  formModal('Add MCP Server',[
+    {id:'name',label:'Server Name',ph:'korean-law'},
+    {id:'cmd',label:'Command',ph:'node',val:'node'},
+    {id:'args',label:'Args (JSON array)',ph:'["/path/to/index.js"]',val:'[]'},
+    {id:'env',label:'Env (JSON, optional)',ph:'{"KEY":"value"}'},
+  ],(d)=>{
+    try{mcpD[d.name]={command:d.cmd,args:P(d.args||'[]')};if(d.env?.trim())mcpD[d.name].env=P(d.env);mcpSave();}
+    catch(e){toast('JSON error: '+e.message,'err');}
+  });
+}
+function mcpEditModal(n){
+  const c=mcpD[n];
+  formModal('Edit: '+n,[
+    {id:'cmd',label:'Command',val:c.command},
+    {id:'args',label:'Args (JSON)',val:J(c.args||[])},
+    {id:'env',label:'Env (JSON)',val:J(c.env||{})},
+  ],(d)=>{
+    try{mcpD[n]={command:d.cmd,args:P(d.args||'[]')};const e=d.env?.trim();if(e&&e!=='{}')mcpD[n].env=P(e);mcpSave();}
+    catch(e){toast('JSON error: '+e.message,'err');}
+  });
+}
+async function mcpSave(){await api('/mcp',{method:'POST',body:J(mcpD)});toast('Saved');showRestartBanner();mcpR();}
+function mcpPaste(){
+  gmShow(`<h3>Paste MCP Config</h3>
+    <div class="help">Claude Desktop / Cursor / VS Code의 MCP 설정 JSON을 그대로 붙여넣기</div>
+    <textarea class="inp" id="mcp-pv" style="min-height:200px" placeholder='{\n  "mcpServers": {\n    "server-name": {\n      "command": "node",\n      "args": ["/path/to/index.js"]\n    }\n  }\n}'></textarea>
+    <div class="help mt">mcpServers / mcp_servers / 직접 서버 객체 모두 자동 인식</div>
+    <div style="display:flex;gap:.4rem;justify-content:flex-end;margin-top:.75rem;"><button class="btn btn-g" onclick="gmClose()">Cancel</button><button class="btn btn-p" id="mcp-pi">Import</button></div>`);
+  $('mcp-pi').onclick=()=>{
+    try{
+      const raw=P($('mcp-pv').value);
+      let servers=raw.mcpServers||raw.mcp_servers||raw;
+      if(typeof servers!=='object'||Array.isArray(servers))throw new Error('Object expected');
+      let cnt=0;
+      for(const[n,c]of Object.entries(servers)){if(c.command){mcpD[n]={command:c.command,args:c.args||[]};if(c.env)mcpD[n].env=c.env;cnt++;}}
+      gmClose();
+      if(cnt>0){mcpSave();toast(`${cnt} server(s) imported`);}else toast('No valid servers found','err');
+    }catch(e){toast('Parse error: '+e.message,'err');}
+  };
+}
+
+// ── Cron ──
+async function cronLoad(){
+  let d;try{const r=await fetch('/api/jobs',{headers:{Authorization:H}});d=await r.json();}catch(e){toast('Failed to load jobs','err');return;}
+  $('cron-l').innerHTML=(d.jobs||d||[]).map(j=>{const id=esc(j.id);return`<div class="card mb" style="padding:.85rem"><div class="fb"><div><div style="font-weight:590;font-size:.85rem">${esc(j.name)}</div><div style="font-size:.75rem;color:var(--t3);margin-top:.15rem;font-family:var(--mono)">${esc(j.schedule?.expr||j.schedule_display||'?')} · ${esc(j.skill||'-')} · ${esc(j.deliver||'local')}</div>${j.last_status?`<div style="margin-top:.25rem"><span class="pill ${j.last_status==='ok'?'pg':'pr'}">${esc(j.last_status)}</span> <span style="font-size:.7rem;color:var(--t4)">${j.last_run_at?new Date(j.last_run_at).toLocaleString('ko-KR'):''}</span></div>`:''}${j.last_delivery_error?`<div style="font-size:.7rem;color:var(--red);margin-top:.15rem">${esc(j.last_delivery_error)}</div>`:''}</div><div class="row"><span class="pill ${j.enabled?'pg':'pr'}">${j.enabled?'ON':'OFF'}</span><button class="btn btn-g" onclick="cronTog('${id}',${!!j.enabled})">${j.enabled?'Pause':'Resume'}</button><button class="btn btn-s" onclick="ask('Run now?',()=>cronRun('${id}'))">Run</button><button class="btn btn-g" onclick="cronEditModal('${id}')">Edit</button><button class="btn btn-d" onclick="ask('Delete ${esc(j.name)}?',()=>cronDel('${id}'))">Del</button></div></div></div>`;}).join('')||'<div style="color:var(--t4)">No jobs</div>';
+}
+async function cronTog(i,on){await fetch(`/api/jobs/${i}/${on?'pause':'resume'}`,{method:'POST',headers:{Authorization:H}});toast(on?'Paused':'Resumed');cronLoad();}
+async function cronRun(i){await fetch(`/api/jobs/${i}/run`,{method:'POST',headers:{Authorization:H}});toast('Triggered');}
+function cronModal(id,job){
+  formModal(id?'Edit Cron':'Create Cron',[
+    {id:'name',label:'Name',val:job?.name||'',ph:'My Job'},
+    {id:'skill',label:'Skill',val:job?.skill||'',ph:'gwangjin-news'},
+    {id:'schedule',label:'Schedule (cron)',val:job?.schedule?.expr||job?.schedule_display||'0 9 * * *',ph:'0 9 * * *'},
+    {id:'prompt',label:'Prompt',val:job?.prompt||'',ph:'Agent에게 보낼 지시'},
+    {id:'deliver',label:'Deliver',val:job?.deliver||'telegram',ph:'telegram / telegram:ID / local'},
+  ],async(d)=>{
+    if(id){await api(`/cron/${id}/edit`,{method:'POST',body:J(d)});toast('Updated');}
+    else{await api('/cron/create',{method:'POST',body:J(d)});toast('Created');}
+    cronLoad();
+  });
+}
+async function cronEditModal(id){const r=await fetch(`/api/jobs/${id}`,{headers:{Authorization:H}});const j=await r.json();cronModal(id,j);}
+async function cronDel(i){await api(`/cron/${i}`,{method:'DELETE'});toast('Deleted');cronLoad();}
+
+// ── Skills ──
+let allSk=[];
+async function skLoad(){allSk=await api('/skills');skRender(allSk);}
+function skF(){const q=$('skq').value.toLowerCase();skRender(allSk.filter(s=>s.name.toLowerCase().includes(q)||s.category.toLowerCase().includes(q)||(s.description||'').toLowerCase().includes(q)));}
+function skRender(sk){const g={};sk.forEach(s=>(g[s.category]=g[s.category]||[]).push(s));$('sk-l').innerHTML=Object.entries(g).sort(([a],[b])=>a.localeCompare(b)).map(([c,it])=>`<div class="mb"><div style="font-size:.65rem;font-weight:590;color:var(--t4);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.35rem">${esc(c)} (${it.length})</div><div class="g3">${it.map(s=>`<div class="card" style="padding:.6rem .7rem;cursor:pointer;transition:background .12s" onmouseover="this.style.background='var(--card-h)'" onmouseout="this.style.background=''" onclick="skView('${esc(s.path)}')"><div style="font-size:.8rem;font-weight:510">${esc(s.name)}</div><div style="font-size:.7rem;color:var(--t4);margin-top:.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.description||'')}</div></div>`).join('')}</div></div>`).join('')||'<div style="color:var(--t4)">No skills</div>';}
+async function skView(p){
+  const d=await api(`/skills/${p}/detail`);
+  gmShow(`<h3 style="margin-bottom:.5rem">${esc(p)}</h3><pre style="font-family:var(--mono);font-size:.72rem;color:var(--t2);white-space:pre-wrap;max-height:60vh;overflow:auto;padding:.75rem;background:var(--bg0);border-radius:6px;border:1px solid var(--b4);line-height:1.5;">${esc(d.content||d.error||'')}</pre><div style="display:flex;justify-content:flex-end;margin-top:.75rem;"><button class="btn btn-g" onclick="gmClose()">Close</button></div>`);
+}
+
+// ── Config ──
+async function cfgLoad(){const d=await api('/config');$('cfg-c').innerHTML=`<textarea class="inp" id="cfg-e" style="min-height:72vh">${esc(typeof d==='string'?d:J(d,null,2))}</textarea>`;}
+async function cfgSave(){try{await api('/config',{method:'POST',body:J(P($('cfg-e').value))});toast('Saved');showRestartBanner();}catch(e){toast('Invalid JSON','err');}}
+
+// ── Env ──
+async function envLoad(){const d=await api('/env');const env=d.env||{};$('env-c').innerHTML=`<div class="card" style="padding:.85rem">${Object.entries(env).map(([k,v])=>`<div style="display:flex;gap:.65rem;margin-bottom:.45rem;align-items:center"><label style="width:210px;font-size:.78rem;font-weight:510;color:var(--t3);flex-shrink:0">${esc(k)}</label><input class="inp" data-ek="${esc(k)}" value="${esc(v)}"></div>`).join('')}</div>`;}
+function envAddModal(){formModal('Add Variable',[{id:'key',label:'Key',ph:'MY_VARIABLE'},{id:'val',label:'Value',ph:'value'}],(d)=>{if(!d.key)return;const c=document.querySelector('#env-c .card');c.insertAdjacentHTML('beforeend',`<div style="display:flex;gap:.65rem;margin-bottom:.45rem;align-items:center"><label style="width:210px;font-size:.78rem;font-weight:510;color:var(--t3);flex-shrink:0">${esc(d.key)}</label><input class="inp" data-ek="${esc(d.key)}" value="${esc(d.val)}"></div>`);});}
+async function envSave(){const d={};document.querySelectorAll('[data-ek]').forEach(e=>d[e.dataset.ek]=e.value);await api('/env',{method:'POST',body:J(d)});toast('Saved');}
+
+// ── Soul ──
+async function soulLoad(){const d=await api('/soul');$('soul-c').innerHTML=`<textarea class="inp" id="soul-e" style="min-height:65vh">${esc(d.content||'')}</textarea>`;}
+async function soulSave(){await api('/soul',{method:'POST',body:J({content:$('soul-e').value})});toast('Saved');}
+
+// ── Logs ──
+async function logLoad(){const d=await api('/logs?lines=300');$('log-c').innerHTML=(d.lines||[]).map(l=>{let c='var(--t4)';if(l.includes('ERROR'))c='var(--red)';else if(l.includes('WARNING'))c='var(--orange)';else if(l.includes('INFO'))c='var(--t2)';return`<div class="log" style="color:${c}">${esc(l)}</div>`;}).join('');$('log-c').scrollTop=99999;}
+async function logClear(){await api('/logs/clear',{method:'POST'});toast('Cleared');logLoad();}
+
+// ── Sessions ──
+async function sessLoad(){const d=await api('/sessions');$('sess-c').innerHTML=`<div class="card"><table><thead><tr><th>Session</th><th>Size</th><th>Modified</th><th></th></tr></thead><tbody>${d.map(s=>`<tr><td style="font-size:.78rem;font-family:var(--mono)">${esc(s.name)}</td><td style="color:var(--t3)">${(s.size/1024).toFixed(1)} KB</td><td style="color:var(--t3)">${esc(s.modified)}</td><td><button class="btn btn-d" style="padding:.15rem .45rem;font-size:.68rem" onclick="ask('Delete this session?',()=>sessDel('${esc(s.name)}'))">Del</button></td></tr>`).join('')}</tbody></table></div>`;}
+async function sessDel(n){await api(`/sessions/${n}`,{method:'DELETE'});toast('Deleted');sessLoad();}
+
+const LD={ov:loadOv,mcp:mcpLoad,cron:cronLoad,sk:skLoad,cfg:cfgLoad,env:envLoad,soul:soulLoad,log:logLoad,sess:sessLoad};
+loadOv();
+</script>
+</body>
+</html>
