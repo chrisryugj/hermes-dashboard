@@ -34,6 +34,12 @@ Web-based admin dashboard for [Hermes Agent](https://github.com/NousResearch/her
 - Secret auto-masking (TOKEN/KEY/SECRET/PASSWORD patterns)
 - Input validation on all endpoints (regex-based)
 - Referrer policy (`no-referrer`) to prevent API key leakage
+- **All `/api/dashboard/*` routes require `API_SERVER_KEY`** (Bearer token,
+  constant-time compare). Without the key set, they return `503` and serve nothing.
+
+> These routes can write `.env`, restart the gateway, create cron jobs, and read
+> session contents. Do not expose the gateway port through a tunnel or reverse
+> proxy without setting `API_SERVER_KEY` first.
 
 ## Installation
 

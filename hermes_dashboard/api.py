@@ -5,7 +5,9 @@ Hermes Dashboard Backend API
 api_server.py의 aiohttp app에 대시보드 라우트를 등록하는 플러그인.
 """
 
+import functools
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -500,29 +502,78 @@ async def handle_delete_cron(request: web.Request) -> web.json_response:
     return web.json_response({"ok": True})
 
 
+def dashboard_api_key() -> str:
+    """API_SERVER_KEY 를 env → ~/.hermes/.env 순으로 읽는다. 기본값은 두지 않는다."""
+    key = os.environ.get("API_SERVER_KEY", "")
+    if key:
+        return key
+    env_file = HERMES_HOME / ".env"
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8", errors="replace").splitlines():
+            if line.startswith("API_SERVER_KEY="):
+                return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return ""
+
+
+def _require_auth(handler):
+    """관리 API 인증.
+
+    이 라우트들은 .env 쓰기·게이트웨이 재시작·cron 생성·세션 열람이 가능하다.
+    게이트웨이가 터널이나 리버스 프록시 뒤에 놓이면 그대로 인터넷에 노출되므로
+    API_SERVER_KEY 없이는 응답하지 않는다.
+    """
+
+    @functools.wraps(handler)
+    async def wrapped(request: "web.Request"):
+        key = dashboard_api_key()
+        if not key:
+            return web.json_response(
+                {"error": "API_SERVER_KEY not configured"}, status=503
+            )
+        header = request.headers.get("Authorization", "")
+        token = header[7:].strip() if header.startswith("Bearer ") else ""
+        if not token or not hmac.compare_digest(token, key):
+            return web.json_response({"error": "unauthorized"}, status=401)
+        return await handler(request)
+
+    return wrapped
+
+
 def register_dashboard_routes(app: "web.Application") -> None:
-    app.router.add_get("/dashboard", handle_dashboard)
-    app.router.add_get("/dashboard/", handle_dashboard)
-    app.router.add_get("/api/dashboard/overview", handle_overview)
-    app.router.add_get("/api/dashboard/config", handle_get_config)
-    app.router.add_post("/api/dashboard/config", handle_set_config)
-    app.router.add_get("/api/dashboard/env", handle_get_env)
-    app.router.add_post("/api/dashboard/env", handle_set_env)
-    app.router.add_get("/api/dashboard/mcp", handle_get_mcp)
-    app.router.add_post("/api/dashboard/mcp", handle_set_mcp)
-    app.router.add_get("/api/dashboard/soul", handle_get_soul)
-    app.router.add_post("/api/dashboard/soul", handle_set_soul)
-    app.router.add_get("/api/dashboard/skills", handle_get_skills)
-    app.router.add_get("/api/dashboard/logs", handle_get_logs)
-    app.router.add_get("/api/dashboard/sessions", handle_get_sessions)
-    app.router.add_post("/api/dashboard/restart", handle_restart_gateway)
-    app.router.add_get("/api/dashboard/cron/{job_id}/output", handle_get_cron_output)
-    app.router.add_post("/api/dashboard/model", handle_set_model)
-    app.router.add_get("/api/dashboard/auth", handle_get_auth_status)
-    app.router.add_delete("/api/dashboard/sessions/{name}", handle_delete_session)
-    app.router.add_post("/api/dashboard/logs/clear", handle_clear_logs)
-    app.router.add_get("/api/dashboard/disk", handle_disk_usage)
-    app.router.add_get("/api/dashboard/skills/{path:.+}/detail", handle_get_skill_detail)
-    app.router.add_post("/api/dashboard/cron/create", handle_create_cron)
-    app.router.add_post("/api/dashboard/cron/{job_id}/edit", handle_edit_cron)
-    app.router.add_delete("/api/dashboard/cron/{job_id}", handle_delete_cron)
+    r = app.router
+
+    def get(path, handler):
+        r.add_get(path, _require_auth(handler))
+
+    def post(path, handler):
+        r.add_post(path, _require_auth(handler))
+
+    def delete(path, handler):
+        r.add_delete(path, _require_auth(handler))
+
+    # 대시보드 HTML 자체는 시크릿을 담지 않는다 — 데이터는 전부 아래 인증 API로만 나간다.
+    r.add_get("/dashboard", handle_dashboard)
+    r.add_get("/dashboard/", handle_dashboard)
+    get("/api/dashboard/overview", handle_overview)
+    get("/api/dashboard/config", handle_get_config)
+    post("/api/dashboard/config", handle_set_config)
+    get("/api/dashboard/env", handle_get_env)
+    post("/api/dashboard/env", handle_set_env)
+    get("/api/dashboard/mcp", handle_get_mcp)
+    post("/api/dashboard/mcp", handle_set_mcp)
+    get("/api/dashboard/soul", handle_get_soul)
+    post("/api/dashboard/soul", handle_set_soul)
+    get("/api/dashboard/skills", handle_get_skills)
+    get("/api/dashboard/logs", handle_get_logs)
+    get("/api/dashboard/sessions", handle_get_sessions)
+    post("/api/dashboard/restart", handle_restart_gateway)
+    get("/api/dashboard/cron/{job_id}/output", handle_get_cron_output)
+    post("/api/dashboard/model", handle_set_model)
+    get("/api/dashboard/auth", handle_get_auth_status)
+    delete("/api/dashboard/sessions/{name}", handle_delete_session)
+    post("/api/dashboard/logs/clear", handle_clear_logs)
+    get("/api/dashboard/disk", handle_disk_usage)
+    get("/api/dashboard/skills/{path:.+}/detail", handle_get_skill_detail)
+    post("/api/dashboard/cron/create", handle_create_cron)
+    post("/api/dashboard/cron/{job_id}/edit", handle_edit_cron)
+    delete("/api/dashboard/cron/{job_id}", handle_delete_cron)
